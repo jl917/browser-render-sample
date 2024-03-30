@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>네트워크 테스트</title>
+  </head>
+  <body>
+    <div>
+      <dl>
+        <dt>status</dt>
+        <dd id="status">3</dd>
+        <dt>delay</dt>
+        <dd id="delay"></dd>
+        <dt>bandWidth</dt>
+        <dd id="bandWidth"></dd>
+      </dl>
+    </div>
+
+    <script>
+      // navigator.connection
+      // navigator.onLine
+      function getNetworkInfo() {
+        const info = {};
+        if (navigator.onLine) {
+          info.type = navigator.connection.effectiveType;
+          info.rtt = navigator.connection.rtt;
+          info.downlink = navigator.connection.downlink;
+        } else {
+          info.type = "offline";
+        }
+        return info;
+      }
+
+      function updateInfo() {
+        const info = getNetworkInfo();
+
+        if (info.type === "offline") {
+          document.getElementById("status").innerText = "offline";
+          document.getElementById("delay").innerText = "offline";
+          document.getElementById("bandWidth").innerText = "offline";
+        } else {
+          document.getElementById("status").innerText = info.type;
+          document.getElementById("delay").innerText = info.rtt;
+          document.getElementById("bandWidth").innerText =
+            info.downlink + "MB/s";
+        }
+      }
+
+      window.addEventListener("online", updateInfo);
+      window.addEventListener("offline", updateInfo);
+      navigator.connection.addEventListener("change", updateInfo);
+      updateInfo();
+
+      const networkInterval = setInterval(function () {
+        console.log(1);
+        updateInfo()
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(networkInterval);
+      }, 4000);
+    </script>
+  </body>
+</html>
